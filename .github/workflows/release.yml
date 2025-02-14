@@ -5,6 +5,9 @@ on:
     tags:
       - "*" # 监听所有 tag
 
+permissions:
+  contents: write  # 允许 GitHub Actions 访问 Releases API
+
 jobs:
   release:
     name: Create Release
@@ -13,11 +16,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
 
       - name: Create ZIP archives
         run: |
