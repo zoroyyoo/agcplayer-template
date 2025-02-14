@@ -1,0 +1,12 @@
+{
+    "id": "widget.agcplayer.videohubtemplatets",
+    "author": "AGC Player",
+    "version": "0.0.1",
+    "agcplayer-require": "^0.0.1",
+    "name": "video-hub-template-ts",
+    "type": "video-hub",
+    "platform": "all",
+    "summary": "This is a agcplayer widget.",
+    "description": "This is a agcplayer widget, JavaScript script.",
+    "disclaimer": "For demonstration only."
+}
