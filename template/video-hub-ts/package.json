@@ -1,7 +1,7 @@
 {
   "name": "video-hub-ts",
   "version": "1.0.0",
-  "description": "",
+  "description": "基于typescript的video-hub类型小组件",
   "main": "widget.js",
   "scripts": {
     "build": "agcplayer build"
