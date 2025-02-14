@@ -3,7 +3,7 @@ name: Release on Tag
 on:
   push:
     tags:
-      - "*" # 监听所有 tag
+      - "*"  # 监听所有 tag 推送事件
 
 permissions:
   contents: write  # 允许 GitHub Actions 访问 Releases API
@@ -28,7 +28,9 @@ jobs:
               NAME=$(jq -r '.name' "$dir/package.json")
               DESCRIPTION=$(jq -r '.description' "$dir/package.json")
               ZIP_NAME="$(basename "$dir").zip"
-              zip -r "archives/$ZIP_NAME" "$dir"
+
+              # 进入子目录并压缩内容，避免包含父级目录 template/
+              (cd "$dir" && zip -r "../../archives/$ZIP_NAME" .)
 
               METADATA_JSON+="\"$NAME\": { \"url\": \"$RELEASE_URL/$ZIP_NAME\", \"description\": \"$DESCRIPTION\" },"
             fi
