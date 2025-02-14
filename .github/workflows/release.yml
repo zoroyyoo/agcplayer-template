@@ -17,27 +17,39 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Create ZIP archives
+      - name: Create ZIP archives and Generate metadata.json
         run: |
           mkdir archives
+          METADATA_JSON="{"
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}"
+
           for dir in template/*; do
             if [ -d "$dir" ]; then
-              zip -r "archives/$(basename "$dir").zip" "$dir"
+              NAME=$(jq -r '.name' "$dir/package.json")
+              DESCRIPTION=$(jq -r '.description' "$dir/package.json")
+              ZIP_NAME="$(basename "$dir").zip"
+              zip -r "archives/$ZIP_NAME" "$dir"
+
+              METADATA_JSON+="\"$NAME\": { \"url\": \"$RELEASE_URL/$ZIP_NAME\", \"description\": \"$DESCRIPTION\" },"
             fi
           done
 
-      - name: Get Tag Name
-        id: get_tag
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          # 去除最后一个逗号并关闭 JSON
+          METADATA_JSON="${METADATA_JSON%,}"
+          METADATA_JSON+="}"
+          
+          echo "$METADATA_JSON" > archives/metadata.json
 
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.TAG_NAME }}
-          name: Release ${{ env.TAG_NAME }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
-          files: archives/*.zip
+          files: |
+            archives/*.zip
+            archives/metadata.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
